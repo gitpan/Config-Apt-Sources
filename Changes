@@ -1,5 +1,9 @@
 Revision history for Config-Apt-Sources
 
+0.02	2007-06-14
+	Fixed bug where get_sources() returned references, breaking
+	encapsulation.  Improved documentation.
+
 0.01    2007-06-11
         First version, released on an unsuspecting world.
 

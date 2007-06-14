@@ -9,11 +9,11 @@ Config::Apt::SourceEntry - Manipulate apt source entries
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 use Carp;
 
 =head1 SYNOPSIS
@@ -25,6 +25,7 @@ use Carp;
     ...
     my $src = new Config::Apt::SourceEntry("deb http://ftp.us.debian.org/debian/ unstable main non-free");
     $src->set_uri("http://apt-proxy:9999/");
+    print $src->to_string();
 
 =head1 FUNCTIONS
 
@@ -53,7 +54,9 @@ sub new {
 
 =head2 to_string
 
-Returns the string representation of the apt source
+Returns the string representation of the apt source.  Takes no arguments.
+
+    print $src->to_string();
 
 =cut
 
@@ -65,7 +68,9 @@ sub to_string {
 
 =head2 from_string
 
-Parses the given string argument as an apt source
+Parses the given string argument as an apt source.
+
+    $src->from_string("deb http://ftp.us.debian.org/debian/ unstable main");
 
 =cut
 

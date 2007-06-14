@@ -3,6 +3,8 @@ package Config::Apt::Sources;
 use warnings;
 use strict;
 
+use Carp;
+use UNIVERSAL qw( isa );
 use Config::Apt::SourceEntry;
 =head1 NAME
 
@@ -10,11 +12,11 @@ Config::Apt::Sources - Parse and manipulate apt sources
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
@@ -22,7 +24,9 @@ our $VERSION = '0.01';
 
     my $srcs = Config::Apt::Sources->new();
     $srcs->parse_stream(do { local $/; <> });
-    ($srcs->get_sources())[0]->set_mirror("whee");
+
+    my @sources = $srcs->get_sources();
+    $sources[0]->set_uri("http://ftp.us.debian.org/debian/");
     print $srcs->to_string();
 
 =head1 FUNCTIONS
@@ -45,6 +49,8 @@ sub new {
 
 Parses the given string argument as the contents of an apt sources.list file.
 
+    $srcs->parse_stream(do { local $/; <FILE> });
+
 =cut
 
 sub parse_stream {
@@ -64,7 +70,9 @@ sub parse_stream {
 
 =head2 to_string
 
-Returns the sources.list as a string
+Returns the sources.list as a string.  Takes no arguments.
+
+    my $newsrcs = $srcs->to_string;
 
 =cut
 
@@ -79,24 +87,35 @@ sub to_string {
 
 =head2 get_sources
 
-Returns an array of Config::Apt::SourceEntry objects
+Returns an array of Config::Apt::SourceEntry objects.  Takes no arguments.
+
+  my @sources = $srcs->get_sources();
 
 =cut
 
 sub get_sources {
   my $self = shift;
-  return @{$self->{'sources'}};
+  return map { new Config::Apt::SourceEntry($_->to_string()) } @{$self->{'sources'}};
 }
 
 =head2 set_sources
 
-Reads an array of Config::Apt::SourceEntry objects
+Reads an array of Config::Apt::SourceEntry objects.  croak()s if any element
+given is not a Config::Apt::SourceEntry element.  Otherwise, returns 1.
+
+  $srcs->set_sources(@sources);
 
 =cut
 
 sub set_sources {
   my $self = shift;
-  $self->{'sources'} = @_;
+  my @sources;
+
+  foreach (@_) {
+    croak "arguments must be Config::Apt::SourceEntry objects" unless isa($_, 'Config::Apt::SourceEntry');
+    push @sources,$_;
+  }
+  $self->{'sources'} = [ @sources ];
 
   return 1;
 }
