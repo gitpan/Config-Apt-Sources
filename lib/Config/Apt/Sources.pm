@@ -12,11 +12,11 @@ Config::Apt::Sources - Parse and manipulate apt sources
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -27,6 +27,7 @@ our $VERSION = '0.02';
 
     my @sources = $srcs->get_sources();
     $sources[0]->set_uri("http://ftp.us.debian.org/debian/");
+    $srcs->set_sources(@sources);
     print $srcs->to_string();
 
 =head1 FUNCTIONS

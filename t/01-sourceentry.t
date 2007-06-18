@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 3;
+use Test::More tests => 4;
 
 use Config::Apt::SourceEntry;
 my $src = Config::Apt::SourceEntry->new("deb http://example.com/debian testing main contrib");
@@ -35,4 +35,11 @@ if ($line eq "deb-src ftp://example.net/ubuntu/ edgy main") {
   pass("set and constructed new line correctly");
 } else {
   fail("failed to construct new line");
+}
+
+$src = Config::Apt::SourceEntry->new("deb http://example.com/debian-custom ./");
+if (defined $src) {
+  pass("entry with no components created");
+} else {
+  fail("failed to create entry with no components");
 }

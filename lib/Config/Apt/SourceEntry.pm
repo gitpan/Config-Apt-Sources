@@ -9,11 +9,11 @@ Config::Apt::SourceEntry - Manipulate apt source entries
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =cut
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 use Carp;
 
 =head1 SYNOPSIS
@@ -46,7 +46,7 @@ sub new {
 
   bless($self, $class_name);
   if (@_ > 1) {
-    from_string($self,$_[1]);
+    if (!defined(from_string($self,$_[1]))) { $self = undef };
   }
   return $self;
 
@@ -72,17 +72,23 @@ Parses the given string argument as an apt source.
 
     $src->from_string("deb http://ftp.us.debian.org/debian/ unstable main");
 
+Returns undef on error, otherwise 1.
+
 =cut
 
 sub from_string {
   my ($self,$str) = @_;
   chomp $str;
   my @source = split / /,$str;
-  croak "Invalid source" unless @source >= 4;
+  unless (@source >= 3) {
+    carp "Invalid source";
+    return undef;
+  }
   $self->{'type'} = shift @source;
   $self->{'uri'}  = shift @source;
   $self->{'dist'} = shift @source;
   $self->{'components'} = [ @source ];
+  return 1;
 }
 
 =head2 get_type, get_uri, get_dist, get_components
@@ -102,9 +108,9 @@ Sets the type, uri, distribution (strings), or components (array of strings)
 
 =cut
 
-sub set_type { my $self=shift;$self->{'type'} = shift;   }
-sub set_uri  { my $self=shift;$self->{'uri'} = shift; }
-sub set_dist { my $self=shift;$self->{'dist'} = shift;   }
+sub set_type { my $self=shift;$self->{'type'} = shift; }
+sub set_uri  { my $self=shift;$self->{'uri'}  = shift; }
+sub set_dist { my $self=shift;$self->{'dist'} = shift; }
 sub set_components { my $self=shift;$self->{'components'} = [ @_ ]; }
 
 =head1 AUTHOR
