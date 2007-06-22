@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 use Config::Apt::SourceEntry;
 my $src = Config::Apt::SourceEntry->new("deb http://example.com/debian testing main contrib");
@@ -42,4 +42,14 @@ if (defined $src) {
   pass("entry with no components created");
 } else {
   fail("failed to create entry with no components");
+}
+
+$src = Config::Apt::SourceEntry->new(" deb   http://example.com/debian	testing main");
+$type = $src->get_type();
+$uri  = $src->get_uri();
+$dist = $src->get_dist();
+if ($type eq "deb" && $uri eq "http://example.com/debian" && $dist eq "testing") {
+  pass("source line w/ extra whitespace parsed correctly");
+} else {
+  fail("failed to parse test line w/ extra whitespace");
 }

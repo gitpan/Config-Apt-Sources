@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:                Config-Apt-Sources
-version:             0.03
+version:             0.04
 abstract:            Parse and manipulate apt sources
 license:             ~
 generated_by:        ExtUtils::MakeMaker version 6.32

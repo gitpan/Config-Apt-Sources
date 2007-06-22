@@ -9,11 +9,11 @@ Config::Apt::SourceEntry - Manipulate apt source entries
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 use Carp;
 
 =head1 SYNOPSIS
@@ -78,7 +78,11 @@ Returns undef on error, otherwise 1.
 
 sub from_string {
   my ($self,$str) = @_;
-  chomp $str;
+  # trim whitespace
+  $str =~ s/^\s+//;
+  $str =~ s/\s+$//;
+  $str =~ s/\s+/ /g;
+
   my @source = split / /,$str;
   unless (@source >= 3) {
     carp "Invalid source";
