@@ -9,11 +9,11 @@ Config::Apt::SourceEntry - Manipulate apt source entries
 
 =head1 VERSION
 
-Version 0.04
+Version 0.10
 
 =cut
 
-our $VERSION = '0.04';
+our $VERSION = '0.10';
 use Carp;
 
 =head1 SYNOPSIS
@@ -63,7 +63,11 @@ Returns the string representation of the apt source.  Takes no arguments.
 sub to_string {
   my $self = shift;
   local $"=' ';
-  return $self->{'type'} . " " . $self->{'uri'} . " " . $self->{'dist'} . " " . "@{ $self->{'components'} }";
+  my $ret = $self->{'type'} . " " . $self->{'uri'} . " " . $self->{'dist'};
+  if (@{$self->{'components'}} > 0) {
+    $ret .= " " . "@{ $self->{'components'} }";
+  }
+  return $ret;
 }
 
 =head2 from_string
@@ -82,6 +86,9 @@ sub from_string {
   $str =~ s/^\s+//;
   $str =~ s/\s+$//;
   $str =~ s/\s+/ /g;
+
+  # trim comments
+  $str =~ s/#.*$//g;
 
   my @source = split / /,$str;
   unless (@source >= 3) {

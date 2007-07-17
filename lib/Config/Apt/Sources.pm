@@ -12,11 +12,11 @@ Config::Apt::Sources - Parse and manipulate apt sources
 
 =head1 VERSION
 
-Version 0.04
+Version 0.10
 
 =cut
 
-our $VERSION = '0.04';
+our $VERSION = '0.10';
 
 =head1 SYNOPSIS
 
@@ -61,7 +61,7 @@ sub parse_stream {
   my @line;
   my @sources;
   for my $line (@lines) {
-    next if $line =~ /(^#|^$)/;
+    next if $line =~ /(^\s*#|^$)/; # skip comments and blank lines
     chomp $line;
     push @sources,new Config::Apt::SourceEntry($line);
   }
@@ -101,8 +101,9 @@ sub get_sources {
 
 =head2 set_sources
 
-Reads an array of Config::Apt::SourceEntry objects.  croak()s if any element
-given is not a Config::Apt::SourceEntry element.  Otherwise, returns 1.
+Reads an array of Config::Apt::SourceEntry objects.  returns undef if
+any element is not a Config::Apt::SourceEntry object.  Otherwise,
+returns 1.
 
   $srcs->set_sources(@sources);
 
@@ -113,7 +114,10 @@ sub set_sources {
   my @sources;
 
   foreach (@_) {
-    croak "arguments must be Config::Apt::SourceEntry objects" unless isa($_, 'Config::Apt::SourceEntry');
+    unless (isa($_, 'Config::Apt::SourceEntry')) {
+      carp "arguments must be Config::Apt::SourceEntry objects";
+      return undef;
+    }
     push @sources,$_;
   }
   $self->{'sources'} = [ @sources ];
